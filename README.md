@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/nokia-steward/netconf-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/nokia-steward/netconf-tools/actions)
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://nokia-steward.github.io/netconf-tools/)
-[![License](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](https://github.com/nokia-steward/netconf-tools/blob/master/LICENSE)
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/)
 
 Python utilities for NETCONF integration and lab troubleshooting.
@@ -13,14 +13,14 @@ Python utilities for NETCONF integration and lab troubleshooting.
 
 | Tool | Purpose |
 |------|---------|
-| [**ncproxy**](docs/ncproxy.md) | Transparent NETCONF over SSH proxy (logging, patching, auto-respond) |
+| [**ncproxy**](ncproxy.md) | Transparent NETCONF over SSH proxy (logging, patching, auto-respond) |
 
 ---
 
 ## Requirements
 
 - **Python**: 3.8 or newer
-- **Network**: SSH/NETCONF between client, ncproxy, and upstream server (see [ncproxy](docs/ncproxy.md))
+- **Network**: SSH/NETCONF between client, ncproxy, and upstream server (see [ncproxy](ncproxy.md))
 - **Python libraries**: [Paramiko](https://pypi.org/project/paramiko/) (installed with the package)
 
 ---
@@ -36,7 +36,7 @@ ncproxy --help
 
 Optional extra for YAML patch rules: `pip install "netconf-tools[yaml]"`.
 
-**From source** (minimal deps in [requirements.txt](requirements.txt)):
+**From source** (minimal deps in [requirements.txt](https://github.com/nokia-steward/netconf-tools/blob/master/requirements.txt)):
 
 ```bash
 pip install -r requirements.txt
@@ -54,17 +54,17 @@ ncproxy --host-key ./ncproxy-hostkey.pem --bind 127.0.0.1 --port 8300 -v \
   netconf://192.0.2.10:830
 ```
 
-More detail: [docs/ncproxy.md](docs/ncproxy.md) (upstream URL formats) and [examples/ncproxy/](examples/ncproxy/).
+More detail: [ncproxy guide](ncproxy.md) and [patch examples on GitHub](https://github.com/nokia-steward/netconf-tools/tree/master/examples/ncproxy).
 
 ---
 
 ## Documentation
 
-- [Documentation site](https://nokia-steward.github.io/netconf-tools/) — home plus tool guides (MkDocs nav)
-- [ncproxy](docs/ncproxy.md) — usage, patch rules, troubleshooting
-- [Examples](examples/README.md) — patch rule samples
-- [Contributing](CONTRIBUTING.md) — development setup and pull requests
-- [Security policy](SECURITY.md) — reporting vulnerabilities
+- [ncproxy](ncproxy.md) — usage, patch rules, troubleshooting
+- [Examples](https://github.com/nokia-steward/netconf-tools/tree/master/examples/ncproxy) — patch rule samples
+- [Contributing](https://github.com/nokia-steward/netconf-tools/blob/master/CONTRIBUTING.md) — development setup
+- [Security policy](https://github.com/nokia-steward/netconf-tools/blob/master/SECURITY.md) — reporting vulnerabilities
+- [Repository README](https://github.com/nokia-steward/netconf-tools/blob/master/README.md) — overview on GitHub
 
 ---
 
