@@ -7,13 +7,18 @@ on:
 permissions:
   contents: write
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: astral-sh/setup-uv@v5
-      - run: uv sync --group dev --system-certs
+        with:
+          enable-cache: true
+      - run: uv sync --group dev
       - run: uv run pytest -q --timeout=120
       - run: uv run python -m build
       - uses: softprops/action-gh-release@v2
