@@ -1,0 +1,68 @@
+[project]
+name = "netconf-tools"
+version = "2.0.0"
+description = "NETCONF utilities for integration and lab use"
+readme = "README.md"
+requires-python = ">=3.8"
+license = "BSD-3-Clause"
+authors = [{ name = "Sven Wisotzky" }]
+dependencies = [
+    "paramiko>=2.7",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Telecommunications Industry",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Networking",
+]
+[project.optional-dependencies]
+yaml = ["PyYAML>=6.0"]
+[project.urls]
+Homepage = "https://github.com/nokia-steward/netconf-tools"
+Documentation = "https://nokia-steward.github.io/netconf-tools/"
+Repository = "https://github.com/nokia-steward/netconf-tools"
+[project.scripts]
+ncproxy = "ncproxy:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-timeout>=2.3",
+    "ruff>=0.8",
+    "pre-commit>=3.5,<4",
+    "mkdocs-material>=9.5",
+    "build>=1.2",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+py-modules = ["ncproxy"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+markers = [
+    "unit: in-process tests without live NETCONF wire",
+]
+timeout = 120
+
+[tool.ruff]
+target-version = "py38"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP", "SIM", "C4", "PT", "RUF", "S", "ERA", "PLR0912", "PLR0915"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/**" = ["UP006", "UP035", "UP045", "PLR0912", "PLR0915", "S314", "SIM105", "E501", "S104", "S507"]
+"tests/**" = ["S101", "PLR2004"]

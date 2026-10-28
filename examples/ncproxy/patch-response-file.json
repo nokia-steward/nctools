@@ -1,0 +1,10 @@
+{
+  "server-msg-modifier": [],
+  "client-msg-modifier": [],
+  "auto-respond": [
+    {
+      "match": "[\\s\\S]+(message-id=\"\\d+\")[\\s\\S]+<get-config>[\\s\\S]+",
+      "response-file": "responses/ok-reply.xml"
+    }
+  ]
+}
