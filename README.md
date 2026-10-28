@@ -1,119 +1,92 @@
-# nctools - Python tools for NETCONF
-"nctools" is a collection of NETCONF tools in Python using the paramiko SSHv2 library.
+# netconf-tools
 
-## ncproxy - NETCONF Proxy
-The tool "ncproxy" is a transparent NETCONF proxy. It is deployed between the NETCONF
-server and NETCONF client to provide logging capabilities. From the NETCONF server
-point of view ncproxy acts as client and from the NETCONF client point of view it
-acts as server. All hello messages, RPC requests, RPC responses and notification
-messages are subject of logging.
+[![Build Status](https://github.com/nokia-steward/netconf-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/nokia-steward/netconf-tools/actions)
+[![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://nokia-steward.github.io/netconf-tools/)
+[![License](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/)
 
-In the current version, only NETCONF over SSHv2 using password authentication
-is supported. Both framing methods end-of-message-framing (base1:0) and chunked
-framing (base1:1) are supported. Username and password are provided by the NETCONF
-client while ncproxy is reusing this information to get connectivity towards to server.
+Python utilities for NETCONF integration and lab troubleshooting.
 
-The ncproxy tool is helpful for network integrators, who want to troubleshoot NETCONF
-without having logging capabilities for neither the server nor the client. Capturing
-the SSHv2 traffic using tools like tcpdump, snoop or wireshark does typically not help,
-as there is no easy way to break SSHv2 privacy.
+---
 
-For improved trouble-shooting, ncproxy can be used to modify server and client messages
-as they are forwarded through the proxy. A JSON file is used to define the set of
-modification rules to be used. Each modification rule contains a match criteria (regex)
-and a patch action. Using JSON requires the patch action to provided as single line.
-To improve readability and maintainability patch-files are supported.
+## Tools
 
-Beside of patching messages ncproxy support auto-responses. The user can define
-a match criteria, in which case the ncproxy is answer the clients NETCONF request on
-behalf of the NETCONF server. In conclusion, those rpc-requests are never send to the
-server, which allows to test NETCONF features, which are not yet implemented by the
-server.
+| Tool | Purpose |
+|------|---------|
+| [**ncproxy**](docs/ncproxy.md) | Transparent NETCONF over SSH proxy (logging, patching, auto-respond) |
 
-Example patch01.json removes some server and client capabilities during <hello>
-message exchange:
+---
 
-```javascript
-{
-  "server-msg-modifier": [
-    {
-      "match": "<capability>urn:ietf:params:netconf:capability:writable-running:1.0</capability>",
-      "patch": "<!-- writable-running removed -->"
-    },
-    {
-      "match": "<capability>urn:ietf:params:netconf:base:1.1</capability>",
-      "patch": "<!-- base:1.1 removed -->"
-    }    
-  ],
-  "client-msg-modifier": [
-    {
-      "match": "<capability>urn:ietf:params:netconf:base:1.1</capability>",
-      "patch": "<!-- base:1.1 removed -->"
-    }
-  ],
-  "auto-respond": []
-}
+## Requirements
+
+- **Python**: 3.8 or newer
+- **Network**: SSH/NETCONF between client, ncproxy, and upstream server (see [ncproxy](docs/ncproxy.md))
+- **Python libraries**: [Paramiko](https://pypi.org/project/paramiko/) (installed with the package)
+
+---
+
+## Installation
+
+**Package:**
+
+```bash
+pip install .
+ncproxy --help
 ```
 
-Example patch02.json is replaces rpc-error messages with rpc-reply/ok responses:
-```javascript
-{
-  "server-msg-modifier": [
-    {
-      "match": "[\\s\\S]+(message-id=\"\\d+\")[\\s\\S]+<rpc-error>[\\s\\S]+",
-      "patch": "<rpc-reply \\1 xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\"><ok/></rpc-reply>"     
-    }
-  ],
-  "client-msg-modifier": [],
-  "auto-respond": []
-}
+Optional extra for YAML patch rules: `pip install "netconf-tools[yaml]"`.
+
+**From source** (minimal deps in [requirements.txt](requirements.txt)):
+
+```bash
+pip install -r requirements.txt
+python src/ncproxy.py --help
 ```
 
-Example patch03.json automatically response with rpc-reply/ok for any copy-config requests.
-```javascript
-{
-  "server-msg-modifier": [],
-  "client-msg-modifier": [],
-  "auto-respond": [
-    {
-      "match": "[\\s\\S]+(message-id=\"\\d+\")[\\s\\S]+<copy-config>[\\s\\S]+",
-      "response": "<rpc-reply \\1 xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\"><ok/></rpc-reply>"
-    }
-  ]
-}
+---
+
+## Quick example
+
+Lab proxy in front of a device (connect your NETCONF client to `127.0.0.1:8300`):
+
+```bash
+ncproxy --host-key ./ncproxy-hostkey.pem --bind 127.0.0.1 --port 8300 -v \
+  netconf://192.0.2.10:830
 ```
 
-Use the '--help' option to get usage information:
-```
-$ ./ncproxy.py --help
-usage: ncproxy.py [-h] [--version] [-v] [-d] [--logfile filename]
-                  [--serverlog filename] [--clientlog filename]
-                  [--patch filename] [--port tcpport]
-                  netconf://<hostname>[:port]
+More detail: [docs/ncproxy.md](docs/ncproxy.md) (upstream URL formats) and [examples/ncproxy/](examples/ncproxy/).
 
-optional arguments:
-  -h, --help                   show this help message and exit
-  --version                    show program's version number and exit
+---
 
-  -v, --verbose                enable logging
-  -d, --debug                  enable ssh-lib logging
-  --logfile filename           trace/debug log (default: <stderr>)
-  --serverlog filename         server log (default: <stdout>)
-  --clientlog filename         client log (default: <stdout>)
+## Documentation
 
-  --patch filename             Patch NETCONF messages (default: <none>)
+- [Documentation site](https://nokia-steward.github.io/netconf-tools/) — home plus tool guides (MkDocs nav)
+- [ncproxy](docs/ncproxy.md) — usage, patch rules, troubleshooting
+- [Examples](examples/README.md) — patch rule samples
+- [Contributing](CONTRIBUTING.md) — development setup and pull requests
+- [Security policy](SECURITY.md) — reporting vulnerabilities
 
-  --port tcpport               TCP-port ncproxy is listening
-  netconf://<hostname>[:port]  Netconf over SSH server
-```
+---
 
-Example, using patching and enable highest logging level:
-```
-$ ./ncproxy.py --patch patch03.json -vvvvv 135.227.236.97:830
-17/09/05 11:08:24,38  INFO     Listening for client connection ...
-17/09/05 11:08:26,799 DEBUG    Server Key: f2b3c60ea34bf2cd5bd1e1d8c0203228
-```
+## Features
+
+- **Integration-focused** — Lab troubleshooting when encrypted SSH hides payload from packet capture
+- **Traffic control** — Log, patch, or auto-answer NETCONF messages on the wire
+- **SSH NETCONF** — Paramiko-based; base 1.0 and 1.1 framing
+
+---
+
+## Support
+
+- [Report issues](https://github.com/nokia-steward/netconf-tools/issues)
+- [Changelog](https://github.com/nokia-steward/netconf-tools/blob/master/CHANGELOG.md)
+
+---
 
 ## License
 
-This project is licensed under the BSD-3-Clause license - see the [LICENSE](https://github.com/nokia/nctools/blob/master/LICENSE).
+BSD 3-Clause License (see [LICENSE](https://github.com/nokia-steward/netconf-tools/blob/master/LICENSE))
+
+---
+
+**Version**: 2.0.0 | **License**: BSD 3-Clause

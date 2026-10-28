@@ -1,0 +1,15 @@
+site_name: netconf-tools
+site_url: https://nokia-steward.github.io/netconf-tools/
+repo_url: https://github.com/nokia-steward/netconf-tools
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - ncproxy: ncproxy.md
+
+plugins:
+  - search
+
+markdown_extensions:
+  - toc:
+      permalink: true
