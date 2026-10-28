@@ -70,7 +70,7 @@ python src/ncproxy.py --patch examples/ncproxy/patch03.json -v netconf://192.0.2
 
 Rule files define `server-msg-modifier`, `client-msg-modifier`, and `auto-respond` lists. Each rule has a regex `match` and a `patch` or `response` (or `patch-file` / `response-file` for multi-line XML).
 
-Sample files: [examples/ncproxy/](../examples/ncproxy/).
+Sample files: [examples/ncproxy/](https://github.com/nokia-steward/netconf-tools/tree/master/examples/ncproxy).
 
 **patch01** — remove selected capabilities during `<hello>`:
 
